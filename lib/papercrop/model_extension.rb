@@ -31,7 +31,7 @@ module Papercrop
         end
 
         if respond_to? :attachment_definitions
-          # for Paperclip <= 3.4 
+          # for Paperclip <= 3.4
           definitions = attachment_definitions
         else
           # for Paperclip >= 3.5
@@ -41,6 +41,7 @@ module Papercrop
         definitions[attachment_name][:processors] ||= []
         definitions[attachment_name][:processors] << :cropper
 
+        after_create :"reprocess_to_crop_#{attachment_name}_attachment"
         after_update :"reprocess_to_crop_#{attachment_name}_attachment"
       end
     end
@@ -50,7 +51,7 @@ module Papercrop
 
       # Asks if the attachment received a crop process
       # @param  attachment_name [Symbol]
-      # 
+      #
       # @return [Boolean]
       def cropping?(attachment_name)
         !self.send(:"#{attachment_name}_crop_x").blank? &&
@@ -121,7 +122,7 @@ end
 
 
 # Mongoid support
-if defined? Mongoid::Document 
+if defined? Mongoid::Document
   Mongoid::Document::ClassMethods.module_eval do
     include Papercrop::ModelExtension::ClassMethods
   end
