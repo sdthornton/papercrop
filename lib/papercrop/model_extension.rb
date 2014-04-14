@@ -13,6 +13,7 @@ module Papercrop
       #
       # @param attachment_name [Symbol] Name of the desired attachment to crop
       # @param opts [Hash]
+
       def crop_attached_file(attachment_name, opts = {})
         [:crop_x, :crop_y, :crop_w, :crop_h, :original_w, :original_h, :box_w, :aspect, :cropped_geometries].each do |a|
           attr_accessor :"#{attachment_name}_#{a}"
@@ -41,7 +42,6 @@ module Papercrop
         definitions[attachment_name][:processors] ||= []
         definitions[attachment_name][:processors] << :cropper
 
-        after_create :"reprocess_to_crop_#{attachment_name}_attachment"
         after_update :"reprocess_to_crop_#{attachment_name}_attachment"
       end
     end
